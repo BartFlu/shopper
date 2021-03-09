@@ -15,7 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from Recipes import views
 
 urlpatterns = [
+    path('', views.MainView.as_view(), name='main'),
+    path('addToBasket/<int:pk>', views.add_to_basket, name='addToBasket'),
+    path('removeFromBasket/<int:pk>', views.remove_from_basket, name='removeFromBasket'),
+    path('basket', views.ChosenRecipes.as_view(), name='basket'),
     path('admin/', admin.site.urls),
 ]

@@ -1,4 +1,5 @@
 from django.db import models
+from django.shortcuts import reverse
 
 
 class Tag(models.Model):
@@ -29,9 +30,13 @@ class Recipe(models.Model):
     tags = models.ManyToManyField(Tag)
     added = models.DateTimeField(auto_now_add=True)
     last_used = models.DateTimeField(null=True, blank=True)
+    chosen = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse('main')
 
 
 class Ingredient(models.Model):
@@ -52,3 +57,5 @@ class Ingredient(models.Model):
 
     def __str__(self):
         return f'{self.type} - {self.quantity} {self.get_unit_display()}'
+
+
