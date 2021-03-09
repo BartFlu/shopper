@@ -22,5 +22,6 @@ urlpatterns = [
     path('addToBasket/<int:pk>', views.add_to_basket, name='addToBasket'),
     path('removeFromBasket/<int:pk>', views.remove_from_basket, name='removeFromBasket'),
     path('basket', views.ChosenRecipes.as_view(), name='basket'),
+    path('recipe/<int:pk>', views.RecipeDetails.as_view(), name='recipe'),
     path('admin/', admin.site.urls),
 ]

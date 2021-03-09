@@ -1,0 +1,26 @@
+{% extends './base.html' %}
+  {%block title %}Przepisy{% endblock %}
+
+  {%block body %}
+  <table>
+    {% if recipes %}
+      {% for r in recipes %}
+      <tr>
+        <td><a href="{% url 'recipe' pk=r.pk %}">{{r.name}}</a></td>
+          {% if r.chosen == True %}
+            <td><a href="{% url 'removeFromBasket' pk=r.pk %}"><button class="btn btn-default">Usuń z koszyka</button></a></td>
+          {% else %}
+            <td><a href="{% url 'addToBasket' pk=r.pk %}"><button class="btn btn-default">Dodaj do koszyka</button></a></td>
+          {% endif %}
+        {% endfor %}
+    {% else %}
+    <td>Nie wybrano żadnych przepisów</td>
+    {% endif %}
+  </tr>
+  </table>
+  <a href="{% url 'main' %}"><button class="btn btn-default">Przejdź do listy przepisów</button></a>
+  <a href=""><button class="btn btn-default">Dodaj do listy zakupów</button></a>
+
+
+
+  {% endblock %}

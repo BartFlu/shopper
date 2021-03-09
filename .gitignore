@@ -1,0 +1,4 @@
+/env/
+/.idea/
+/creds.txt
+/Shopper/db.sqlite3
