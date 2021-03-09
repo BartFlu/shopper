@@ -59,3 +59,34 @@ class Ingredient(models.Model):
         return f'{self.type} - {self.quantity} {self.get_unit_display()}'
 
 
+class ShopingList(models.Model):
+
+    UNITS = [
+        (1, 'litres'),
+        (2, 'milliliters'),
+        (3, 'grams'),
+        (4, 'pieces'),
+
+    ]
+
+    type = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=0)
+    unit = models.IntegerField(choices=UNITS)
+
+    def __str__(self):
+        return f'{self.type} - {self.quantity} {self.get_unit_display()}'
+
+    def delete_everything(self):
+        ShopingList.objects.all().delete()
+
+    def print(self):
+        shopping_list = ''
+        items = ShopingList.objects.all()
+        for i in items:
+            shopping_list + i + '\n'
+        return shopping_list
+
+
+
+
+

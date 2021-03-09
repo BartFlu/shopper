@@ -23,5 +23,6 @@ urlpatterns = [
     path('removeFromBasket/<int:pk>', views.remove_from_basket, name='removeFromBasket'),
     path('basket', views.ChosenRecipes.as_view(), name='basket'),
     path('recipe/<int:pk>', views.RecipeDetails.as_view(), name='recipe'),
+    path('toshoppinglist', views.convert_to_shopping_list, name='convert'),
     path('admin/', admin.site.urls),
 ]

@@ -1,6 +1,6 @@
 from django.shortcuts import render, reverse, redirect, HttpResponse, HttpResponseRedirect
-from django.views.generic import ListView, DetailView
-from .models import Recipe, Ingredient, Tag
+from django.views.generic import ListView, DetailView, TemplateView
+from .models import Recipe, Ingredient, ShopingList
 from django.shortcuts import get_object_or_404
 from .forms import IngredientForm, RecipeForm, TagForm
 # Create your views here.
@@ -47,3 +47,14 @@ class RecipeDetails(DetailView):
         context['ingredients'] = Ingredient.objects.filter(recipe=self.get_object())
         return context
 
+
+def convert_to_shopping_list(request):
+
+    recipes = Recipe.objects.filter(chosen=True)
+    for r in recipes:
+        ingredients = Ingredient.objects.filter(recipe=r)
+        for i in ingredients:
+            slist, created = ShopingList.objects.get_or_create(type=i.type, unit=i.unit)
+            slist.quantity += i.quantity
+            slist.save()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
