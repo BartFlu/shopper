@@ -3,6 +3,7 @@ from django.views.generic import ListView, DetailView, TemplateView
 from .models import Recipe, Ingredient, ShopingList
 from django.shortcuts import get_object_or_404
 from .forms import IngredientForm, RecipeForm, TagForm
+from .tasks import send_mail_and_clear_baset
 # Create your views here.
 
 
@@ -58,3 +59,27 @@ def convert_to_shopping_list(request):
             slist.quantity += i.quantity
             slist.save()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+
+class ShoppingListView(ListView):
+    model = ShopingList
+    context_object_name = 'list'
+    template_name = 'Recipes/shoppingList.html'
+
+
+def send_list(request):
+    if request.method == 'POST':
+
+        email = request.POST.get('email')
+        text = make_shopping_list()
+        send_mail_and_clear_baset.delay(text, email)
+
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+
+def make_shopping_list():
+    text = ''
+    lines = ShopingList.objects.all()
+    for line in lines:
+        text = text + line.to_string() + '\n'
+    return text

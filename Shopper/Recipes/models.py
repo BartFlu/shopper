@@ -79,13 +79,9 @@ class ShopingList(models.Model):
     def delete_everything(self):
         ShopingList.objects.all().delete()
 
-    def print(self):
-        shopping_list = ''
-        items = ShopingList.objects.all()
-        for i in items:
-            shopping_list + i + '\n'
-        return shopping_list
 
+    def to_string(self):
+        return self.__str__()
 
 
 
