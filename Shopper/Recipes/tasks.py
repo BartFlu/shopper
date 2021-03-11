@@ -1,5 +1,5 @@
 from celery import shared_task
-from .models import Recipe
+from .models import Recipe, ShoppingList
 from django.utils import timezone
 from django.core.mail import send_mail
 
@@ -34,6 +34,9 @@ def mark_recipe_as_used_and_clear_the_basket():
         r.last_used = timezone.now()
         r.chosen = False
         r.save()
+    s = ShoppingList()
+    s.delete_everything()
+
 
 
 
