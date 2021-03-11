@@ -1,6 +1,6 @@
 from django.shortcuts import render, reverse, redirect, HttpResponse, HttpResponseRedirect
 from django.views.generic import ListView, DetailView, TemplateView
-from .models import Recipe, Ingredient, ShopingList
+from .models import Recipe, Ingredient, ShoppingList
 from django.shortcuts import get_object_or_404
 from .forms import IngredientForm, RecipeForm, TagForm
 from .tasks import send_mail_and_clear_baset
@@ -55,19 +55,24 @@ def convert_to_shopping_list(request):
     for r in recipes:
         ingredients = Ingredient.objects.filter(recipe=r)
         for i in ingredients:
-            slist, created = ShopingList.objects.get_or_create(type=i.type, unit=i.unit)
+            slist, created = ShoppingList.objects.get_or_create(type=i.type, unit=i.unit)
             slist.quantity += i.quantity
             slist.save()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 
 class ShoppingListView(ListView):
-    model = ShopingList
+    model = ShoppingList
     context_object_name = 'list'
     template_name = 'Recipes/shoppingList.html'
 
 
 def send_list(request):
+    """
+    TODO: form.clean_data?
+    :param request:
+    :return:
+    """
     if request.method == 'POST':
 
         email = request.POST.get('email')
@@ -79,7 +84,7 @@ def send_list(request):
 
 def make_shopping_list():
     text = ''
-    lines = ShopingList.objects.all()
+    lines = ShoppingList.objects.all()
     for line in lines:
         text = text + line.to_string() + '\n'
     return text

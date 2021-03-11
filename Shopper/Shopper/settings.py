@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from .emailcred import port, host, password, login
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,6 +28,9 @@ SECRET_KEY = '7u&n*)6j85*psq13=p$!xegxzkpqe)!x1w+9f3-qjty-!_on(u'
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 
 # Application definition

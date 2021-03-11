@@ -17,7 +17,7 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-    name = models.CharField(max_length=200,verbose_name='nazwa')
+    name = models.CharField(max_length=200, verbose_name='nazwa')
     category = models.ForeignKey(Category, verbose_name='kategoria', on_delete=models.DO_NOTHING)
 
     def __str__(self):
@@ -59,7 +59,7 @@ class Ingredient(models.Model):
         return f'{self.type} - {self.quantity} {self.get_unit_display()}'
 
 
-class ShopingList(models.Model):
+class ShoppingList(models.Model):
 
     UNITS = [
         (1, 'litres'),
@@ -77,7 +77,7 @@ class ShopingList(models.Model):
         return f'{self.type} - {self.quantity} {self.get_unit_display()}'
 
     def delete_everything(self):
-        ShopingList.objects.all().delete()
+        ShoppingList.objects.all().delete()
 
 
     def to_string(self):
