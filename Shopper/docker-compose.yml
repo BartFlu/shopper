@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  db:
+    image: postgres
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=shopper
+  django:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    depends_on:
+      - db     
+    ports:
+      - "8000:8000"
+  redis:
+    image: redis
+  worker:
+    image: shopper_django
+    command: celery -A Shopper worker -l info
+    volumes:
+      - .:/code
+    environment:
+      - DJANGO_SETTINGS_MODULE=Shopper.settings
+      - C_FORCE_ROOT=true
+    depends_on:
+      - django    
+volumes:
+  pg_data:
+    driver: local  
