@@ -2,18 +2,38 @@
   {%block title %}Przepisy{% endblock %}
 
   {%block body %}
-  <table>
+  <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Nazwa</th>
+      <th scope="col">Tagi</th>
+      <th scope="col">Ostatnio używany</th>
+      <th scope="col">Akcja</th>
+    </tr>
+  </thead>
+  <tbody>
     {% for r in recipes %}
     <tr>
-      <td><p><a href="{% url 'recipe' pk=r.pk %}">{{r.name}}</a></p></td>
+      <td><a href="{% url 'recipe' pk=r.pk %}">{{r.name}}</a></td>
+      <td>{% if r.tags %}
+        {% for t in r.tags.all%}
+        {{t}}
+        {% endfor %}
+         {% else %}
+         Brak tagów
+          {%endif%}</td>
+      <td>{% if r.last_used %}{{r.last_used}} {% else %}Jeszcze nie wykorzystany {%endif%}</td>
       {% if r.chosen == True %}
-      <td><a href="{% url 'removeFromBasket' pk=r.pk %}"><button class="btn btn-default">Usuń z koszyka</button></a></td>
+      <td><a href="{% url 'removeFromBasket' pk=r.pk %}"><button type="button" class="btn btn-danger">Usuń z koszyka</button></a></td>
       {% else %}
-      <td><a href="{% url 'addToBasket' pk=r.pk %}"><button class="btn btn-default">Dodaj do koszyka</button></a></td>
+      <td><a href="{% url 'addToBasket' pk=r.pk %}"><button type="button" class="btn btn-success">Dodaj do koszyka</button></a></td>
       {% endif %}
-      {% endfor %}
-  </tr>
-  </table>
-  <a href="{% url 'basket' %}"><button class="btn btn-default">Przejdź do koszyka</button></a>
+    </tr>
+    {% endfor %}
+
+  </tbody>
+</table>
+
+  <a href="{% url 'basket' %}"><button type="button" class="btn btn-primary">Przejdź do koszyka</button></a>
 
   {% endblock %}
