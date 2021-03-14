@@ -1,8 +1,7 @@
-from django.shortcuts import render, reverse, redirect, HttpResponse, HttpResponseRedirect
-from django.views.generic import ListView, DetailView, TemplateView
+from django.shortcuts import HttpResponseRedirect
+from django.views.generic import ListView, DetailView
 from .models import Recipe, Ingredient, ShoppingList
 from django.shortcuts import get_object_or_404
-from .forms import IngredientForm, RecipeForm, TagForm
 from .tasks import send_mail_and_clear_baset
 # Create your views here.
 
@@ -10,8 +9,19 @@ from .tasks import send_mail_and_clear_baset
 class MainView(ListView):
     model = Recipe
     paginate_by = 14
+
     context_object_name = 'recipes'
     template_name = 'Recipes/main_view.html'
+
+
+class MainViewFiltered(ListView):
+    template_name = 'Recipes/main_view.html'
+    paginate_by = 14
+    context_object_name = 'recipes'
+
+    def get_queryset(self):
+        print(self.kwargs['tag'])
+        return Recipe.objects.filter(tags__in=[self.kwargs['tag']])
 
 
 def add_to_basket(request, pk):
@@ -28,7 +38,7 @@ def remove_from_basket(request, pk):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 
-class ChosenRecipes(ListView):
+class BasketView(ListView):
     model = Recipe
     paginate_by = 20
     context_object_name = 'recipes'
@@ -66,6 +76,10 @@ class ShoppingListView(ListView):
     context_object_name = 'list'
     template_name = 'Recipes/shoppingList.html'
 
+    def get_queryset(self):
+        queryset = ShoppingList.objects.all().order_by('type__category')
+        return queryset
+
 
 def send_list(request):
     """
@@ -79,7 +93,7 @@ def send_list(request):
         text = make_shopping_list()
         send_mail_and_clear_baset.delay(text, email)
 
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+        return HttpResponseRedirect('main')
 
 
 def make_shopping_list():
@@ -87,4 +101,24 @@ def make_shopping_list():
     lines = ShoppingList.objects.all()
     for line in lines:
         text = text + line.to_string() + '\n'
+        if line.comments:
+            text = text + 'Uwagi: ' + line.comments + '\n'
     return text
+
+
+def add_comment_to_shopping_item(request, pk):
+    if request.method == 'POST':
+
+        item = ShoppingList.objects.get(pk=pk)
+        item.comments = request.POST.get('comment')
+        item.save()
+
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+
+def remove_from_shopping_list(request, pk):
+    item = ShoppingList.objects.get(pk=pk)
+    item.delete()
+
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+

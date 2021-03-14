@@ -17,12 +17,12 @@
       <td><a href="{% url 'recipe' pk=r.pk %}">{{r.name}}</a></td>
       <td>{% if r.tags %}
         {% for t in r.tags.all%}
-        {{t}}
+        <a href="{% url 'main_filtered' tag=t.id %}">{{t}}</a>
         {% endfor %}
          {% else %}
          Brak tagów
           {%endif%}</td>
-      <td>{% if r.last_used %}{{r.last_used}} {% else %}Jeszcze nie wykorzystany {%endif%}</td>
+      <td>{{r.last_used_info}}</td>
       {% if r.chosen == True %}
       <td><a href="{% url 'removeFromBasket' pk=r.pk %}"><button type="button" class="btn btn-danger">Usuń z koszyka</button></a></td>
       {% else %}

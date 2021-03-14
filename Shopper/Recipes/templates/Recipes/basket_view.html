@@ -22,7 +22,7 @@
          {% else %}
          Brak tagów
           {%endif%}</td>
-      <td>{% if r.last_used %}{{r.last_used}} {% else %}Jeszcze nie wykorzystany {%endif%}</td>
+      <td>{{r.last_used_info}}</td>
       {% if r.chosen == True %}
       <td><a href="{% url 'removeFromBasket' pk=r.pk %}"><button type="button" class="btn btn-default">Usuń z koszyka</button></a></td>
       {% else %}

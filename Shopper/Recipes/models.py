@@ -1,5 +1,7 @@
 from django.db import models
 from django.shortcuts import reverse
+from django.utils import timezone
+from datetime import date, timedelta
 
 
 class Tag(models.Model):
@@ -29,7 +31,7 @@ class Recipe(models.Model):
     source = models.URLField(verbose_name='Źródło', blank=True)
     tags = models.ManyToManyField(Tag)
     added = models.DateTimeField(auto_now_add=True)
-    last_used = models.DateTimeField(null=True, blank=True)
+    last_used = models.DateField(null=True, blank=True)
     chosen = models.BooleanField(default=False)
 
     def __str__(self):
@@ -37,6 +39,20 @@ class Recipe(models.Model):
 
     def get_absolute_url(self):
         return reverse('main')
+
+    def last_used_info(self):
+        if not self.last_used:
+            return 'Jeszcze nie wykorzystany'
+        elif self.last_used >= date.today() - timedelta(days=7):
+            return 'Używane w tym tygodniu'
+        elif self.last_used >= date.today() - timedelta(days=14):
+            return 'Używane w zeszłym tygodniu'
+        elif self.last_used >= date.today() - timedelta(days=21):
+            return 'Używane 2 tygodnie temu'
+        else:
+            return 'Używane ponad 2 tygodnie temu'
+
+
 
 
 class Ingredient(models.Model):
@@ -72,6 +88,7 @@ class ShoppingList(models.Model):
     type = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=0)
     unit = models.IntegerField(choices=UNITS)
+    comments = models.CharField(max_length=300, null=True)
 
     def __str__(self):
         return f'{self.type} - {self.quantity} {self.get_unit_display()}'

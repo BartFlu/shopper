@@ -19,12 +19,15 @@ from Recipes import views
 
 urlpatterns = [
     path('', views.MainView.as_view(), name='main'),
+    path('/<tag>', views.MainViewFiltered.as_view(), name='main_filtered'),
     path('addToBasket/<int:pk>', views.add_to_basket, name='addToBasket'),
     path('removeFromBasket/<int:pk>', views.remove_from_basket, name='removeFromBasket'),
-    path('basket', views.ChosenRecipes.as_view(), name='basket'),
+    path('basket', views.BasketView.as_view(), name='basket'),
     path('recipe/<int:pk>', views.RecipeDetails.as_view(), name='recipe'),
     path('toshoppinglist', views.convert_to_shopping_list, name='convert'),
     path('shoppingList', views.ShoppingListView.as_view(), name='shoppingList'),
     path('sendList', views.send_list, name='sendList'),
+    path('add_comment/<int:pk>', views.add_comment_to_shopping_item, name='add_comment'),
+    path('delete_shopping_item/<int:pk>', views.remove_from_shopping_list, name='removeFromList'),
     path('admin/', admin.site.urls),
 ]
