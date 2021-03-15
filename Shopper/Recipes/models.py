@@ -53,8 +53,6 @@ class Recipe(models.Model):
             return 'Używane ponad 2 tygodnie temu'
 
 
-
-
 class Ingredient(models.Model):
 
     UNITS = [
@@ -75,7 +73,35 @@ class Ingredient(models.Model):
         return f'{self.type} - {self.quantity} {self.get_unit_display()}'
 
 
-class ShoppingList(models.Model):
+class BasketEntry(models.Model):
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+
+    @staticmethod
+    def create_entry(r):
+        be, created = BasketEntry.objects.get_or_create(recipe=r)
+        if not created:
+            be.quantity += 1
+            be.save()
+
+
+    @staticmethod
+    def delete_entry(pk):
+        be = BasketEntry.objects.get(pk=pk)
+        be.delete()
+
+    def increase_quantity(self, pk):
+        be = BasketEntry.objects.get(pk=pk)
+        be.quantity += 1
+        be.save()
+
+    def decrease_quantity(self, pk):
+        be = BasketEntry.objects.get(pk=pk)
+        be.quantity -= 1
+        be.save()
+
+
+class ShoppingListItem(models.Model):
 
     UNITS = [
         (1, 'litres'),
@@ -93,8 +119,12 @@ class ShoppingList(models.Model):
     def __str__(self):
         return f'{self.type} - {self.quantity} {self.get_unit_display()}'
 
+    def create_from_basket_entry(self):
+        entries = BasketEntry.objects.all()
+
+
     def delete_everything(self):
-        ShoppingList.objects.all().delete()
+        ShoppingListItem.objects.all().delete()
 
 
     def to_string(self):

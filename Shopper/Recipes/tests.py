@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .models import Tag, Category, Product, Recipe, Ingredient, ShoppingList
+from .models import Tag, Category, Product, Recipe, Ingredient, ShoppingListItem
 from django.utils import timezone
 # Create your tests here.
 
@@ -54,13 +54,13 @@ class IngredientTestCase(TestCase):
 class ShoppingListTestCase(TestCase):
     def testShoppingList(self):
         p = Product(name='Mleko')
-        shopl = ShoppingList(type=p, quantity=2, unit=1)
+        shopl = ShoppingListItem(type=p, quantity=2, unit=1)
         self.assertEqual(shopl.type, p)
         self.assertEqual(shopl.quantity, 2)
 
     def testToString(self):
         p = Product(name='Mleko')
-        shopl = ShoppingList(type=p, quantity=2, unit=1)
+        shopl = ShoppingListItem(type=p, quantity=2, unit=1)
         desc = shopl.to_string()
         self.assertIsInstance(desc, str)
 
@@ -69,12 +69,12 @@ class ShoppingListTestCase(TestCase):
         c.save()
         p = Product(name='Mleko', category=c)
         p.save()
-        shopl = ShoppingList(type=p, quantity=2, unit=1)
+        shopl = ShoppingListItem(type=p, quantity=2, unit=1)
         shopl.save()
-        s = ShoppingList.objects.first()
+        s = ShoppingListItem.objects.first()
         self.assertEqual(s, shopl)
         shopl.delete_everything()
-        s = ShoppingList.objects.first()
+        s = ShoppingListItem.objects.first()
         self.assertIsNone(s)
 
 

@@ -7,27 +7,24 @@
     <tr>
       <th scope="col">Nazwa</th>
       <th scope="col">Tagi</th>
-      <th scope="col">Ostatnio używany</th>
+      <th scope="col">Ilość</th>
       <th scope="col">Akcja</th>
     </tr>
   </thead>
   <tbody>
-    {% for r in recipes %}
+    {% for r in entries %}
     <tr>
-      <td><a href="{% url 'recipe' pk=r.pk %}">{{r.name}}</a></td>
-      <td>{% if r.tags %}
-        {% for t in r.tags.all%}
+      <td><a href="{% url 'recipe' pk=r.pk %}">{{r.recipe.name}}</a></td>
+      <td>{% if r.recipe.tags %}
+        {% for t in r.recipe.tags.all%}
         {{t}}
         {% endfor %}
          {% else %}
          Brak tagów
           {%endif%}</td>
-      <td>{{r.last_used_info}}</td>
-      {% if r.chosen == True %}
+      <td>{{r.quantity}}</td>
       <td><a href="{% url 'removeFromBasket' pk=r.pk %}"><button type="button" class="btn btn-default">Usuń z koszyka</button></a></td>
-      {% else %}
-      <td><a href="{% url 'addToBasket' pk=r.pk %}"><button type="button" class="btn btn-default">Dodaj do koszyka</button></a></td>
-      {% endif %}
+
     </tr>
     {% endfor %}
 

@@ -23,11 +23,7 @@
          Brak tagów
           {%endif%}</td>
       <td>{{r.last_used_info}}</td>
-      {% if r.chosen == True %}
-      <td><a href="{% url 'removeFromBasket' pk=r.pk %}"><button type="button" class="btn btn-danger">Usuń z koszyka</button></a></td>
-      {% else %}
       <td><a href="{% url 'addToBasket' pk=r.pk %}"><button type="button" class="btn btn-success">Dodaj do koszyka</button></a></td>
-      {% endif %}
     </tr>
     {% endfor %}
 
