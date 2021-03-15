@@ -1,8 +1,9 @@
-from django.shortcuts import HttpResponseRedirect
+from django.shortcuts import HttpResponseRedirect, render
 from django.views.generic import ListView, DetailView
 from .models import Recipe, Ingredient, ShoppingList
 from django.shortcuts import get_object_or_404
 from .tasks import send_mail_and_clear_baset
+from .forms import IngredientFormSet
 # Create your views here.
 
 
@@ -122,3 +123,14 @@ def remove_from_shopping_list(request, pk):
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
+
+def edit_recipe(request, pk):
+    r = Recipe.objects.get(pk=pk)
+    if request.method == 'POST':
+        formset = IngredientFormSet(request.POST, request.FILES, instance=r)
+        if formset.is_valid():
+            formset.save()
+            return HttpResponseRedirect('main')
+    else:
+        formset = IngredientFormSet(instance=r)
+        return render(request, 'Recipes/edit_recipe.html', {'formset': formset})

@@ -29,5 +29,6 @@ urlpatterns = [
     path('sendList', views.send_list, name='sendList'),
     path('add_comment/<int:pk>', views.add_comment_to_shopping_item, name='add_comment'),
     path('delete_shopping_item/<int:pk>', views.remove_from_shopping_list, name='removeFromList'),
+    path('edit_recipe/<int:pk>', views.edit_recipe, name='edit_recipe'),
     path('admin/', admin.site.urls),
 ]
