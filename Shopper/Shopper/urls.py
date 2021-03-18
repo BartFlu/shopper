@@ -31,5 +31,6 @@ urlpatterns = [
     path('delete_shopping_item/<int:pk>', views.remove_from_shopping_list, name='removeFromList'),
     path('add_recipe', views.AddRecipe.as_view(), name='add_recipe'),
     path('update_recipe/<int:pk>', views.UpdateRecipe.as_view(), name='edit_recipe'),
+    path('add_product', views.AddProduct.as_view(), name='addProduct'),
     path('admin/', admin.site.urls),
 ]

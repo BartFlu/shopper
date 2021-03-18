@@ -5,25 +5,28 @@ from datetime import date, timedelta
 
 
 class Tag(models.Model):
-    tag = models.CharField(max_length=100)
+    tag = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.tag
 
 
 class Category(models.Model):
-    category = models.CharField(max_length=100)
+    category = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.category
 
 
 class Product(models.Model):
-    name = models.CharField(max_length=200, verbose_name='nazwa')
+    name = models.CharField(max_length=200, verbose_name='nazwa', unique=True)
     category = models.ForeignKey(Category, verbose_name='kategoria', on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        ordering = ['category']
 
 
 class Recipe(models.Model):
@@ -33,6 +36,9 @@ class Recipe(models.Model):
     added = models.DateTimeField(auto_now_add=True)
     last_used = models.DateField(null=True, blank=True)
     chosen = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -51,6 +57,8 @@ class Recipe(models.Model):
             return 'Używane 2 tygodnie temu'
         else:
             return 'Używane ponad 2 tygodnie temu'
+
+
 
 
 

@@ -1,10 +1,10 @@
 from django.shortcuts import HttpResponseRedirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
-from .models import Recipe, Ingredient, ShoppingList
+from .models import Recipe, Ingredient, ShoppingList, Product
 from django.shortcuts import get_object_or_404
 from .tasks import send_mail_and_clear_baset
 from .forms import IngredientFormSet, RecipeForm
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.db import transaction
 
 
@@ -70,7 +70,7 @@ def convert_to_shopping_list(request):
             slist, created = ShoppingList.objects.get_or_create(type=i.type, unit=i.unit)
             slist.quantity += i.quantity
             slist.save()
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    return HttpResponseRedirect(reverse('shoppingList'))
 
 
 class ShoppingListView(ListView):
@@ -95,7 +95,7 @@ def send_list(request):
         text = make_shopping_list()
         send_mail_and_clear_baset.delay(text, email)
 
-        return HttpResponseRedirect('main')
+        return HttpResponseRedirect(reverse('main'))
 
 
 def make_shopping_list():
@@ -123,6 +123,7 @@ def remove_from_shopping_list(request, pk):
     item.delete()
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
 
 class AddRecipe(CreateView):
     model = Recipe
@@ -178,3 +179,13 @@ class UpdateRecipe(UpdateView):
 
     def get_success_url(self):
         return reverse_lazy('recipe', kwargs={'pk': self.object.pk})
+
+
+class AddProduct(CreateView):
+    model = Product
+    fields = ['name', 'category']
+    template_name = 'Recipes/AddProduct.html'
+
+    def get_success_url(self):
+        return reverse('addProduct')
+
