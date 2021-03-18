@@ -27,9 +27,9 @@ class Product(models.Model):
 
 
 class Recipe(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, verbose_name='Nazwa')
     source = models.URLField(verbose_name='Źródło', blank=True)
-    tags = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag, verbose_name='Tagi')
     added = models.DateTimeField(auto_now_add=True)
     last_used = models.DateField(null=True, blank=True)
     chosen = models.BooleanField(default=False)
@@ -52,6 +52,9 @@ class Recipe(models.Model):
         else:
             return 'Używane ponad 2 tygodnie temu'
 
+    class Meta:
+        ordering = ['-last_used']
+
 
 
 
@@ -66,10 +69,10 @@ class Ingredient(models.Model):
 
     ]
 
-    type = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField()
-    unit = models.IntegerField(choices=UNITS)
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    type = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name='Rodzaj')
+    quantity = models.PositiveIntegerField(verbose_name='Ilość')
+    unit = models.IntegerField(choices=UNITS, verbose_name='Miara')
+    recipe = models.ForeignKey(Recipe, related_name='ingredients', on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.type} - {self.quantity} {self.get_unit_display()}'

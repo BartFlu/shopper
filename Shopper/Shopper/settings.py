@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Recipes',
+    'crispy_forms',
+    'dynamic_formsets'
 ]
 
 MIDDLEWARE = [
@@ -155,6 +157,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 EMAIL_HOST = host
 EMAIL_PORT = port
@@ -162,3 +165,4 @@ EMAIL_HOST_USER = login
 EMAIL_HOST_PASSWORD = password
 EMAIL_USE_TLS = True
 
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
