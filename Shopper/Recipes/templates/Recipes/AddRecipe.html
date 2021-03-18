@@ -1,0 +1,11 @@
+{% extends "./base.html" %}
+{% load crispy_forms_tags %}
+{% block title%}Dodaj przepis {% endblock%}
+{% block body %}
+<div class="container">
+    <div class="form-group">
+
+             {% crispy form %}
+    </div>
+</div>
+{% endblock  %}

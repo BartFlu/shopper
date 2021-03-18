@@ -1,10 +1,11 @@
-from django.shortcuts import HttpResponseRedirect, render
-from django.views.generic import ListView, DetailView
+from django.shortcuts import HttpResponseRedirect
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from .models import Recipe, Ingredient, ShoppingList
 from django.shortcuts import get_object_or_404
 from .tasks import send_mail_and_clear_baset
-from .forms import IngredientFormSet
-# Create your views here.
+from .forms import IngredientFormSet, RecipeForm
+from django.urls import reverse_lazy
+from django.db import transaction
 
 
 class MainView(ListView):
@@ -123,14 +124,57 @@ def remove_from_shopping_list(request, pk):
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
+class AddRecipe(CreateView):
+    model = Recipe
+    template_name = 'Recipes/AddRecipe.html'
+    form_class = RecipeForm
+    success_url = None
 
-def edit_recipe(request, pk):
-    r = Recipe.objects.get(pk=pk)
-    if request.method == 'POST':
-        formset = IngredientFormSet(request.POST, request.FILES, instance=r)
-        if formset.is_valid():
-            formset.save()
-            return HttpResponseRedirect('main')
-    else:
-        formset = IngredientFormSet(instance=r)
-        return render(request, 'Recipes/edit_recipe.html', {'formset': formset})
+    def get_context_data(self, **kwargs):
+        data = super(AddRecipe, self).get_context_data(**kwargs)
+        if self.request.POST:
+            data['ingredients'] = IngredientFormSet(self.request.POST)
+        else:
+            data['ingredients'] = IngredientFormSet()
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        ingredients = context['ingredients']
+        with transaction.atomic():
+            self.object = form.save()
+            if ingredients.is_valid():
+                ingredients.instance = self.object
+                ingredients.save()
+        return super(AddRecipe, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('recipe', kwargs={'pk': self.object.pk})
+
+
+class UpdateRecipe(UpdateView):
+    model = Recipe
+    template_name = 'Recipes/AddRecipe.html'
+    form_class = RecipeForm
+    success_url = None
+
+    def get_context_data(self, **kwargs):
+        data = super(UpdateRecipe, self).get_context_data(**kwargs)
+        if self.request.POST:
+            data['ingredients'] = IngredientFormSet(self.request.POST, instance=self.object)
+        else:
+            data['ingredients'] = IngredientFormSet(instance=self.object)
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context_data()
+        ingredients = context['ingredients']
+        with transaction.atomic():
+            self.object = form.save()
+            if ingredients.is_valid():
+                ingredients.instance = self.object
+                ingredients.save()
+        return super(UpdateRecipe, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('recipe', kwargs={'pk': self.object.pk})

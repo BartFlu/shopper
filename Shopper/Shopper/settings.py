@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Recipes',
+    'crispy_forms',
+    'dynamic_formsets'
 ]
 
 MIDDLEWARE = [
@@ -162,3 +164,4 @@ EMAIL_HOST_USER = login
 EMAIL_HOST_PASSWORD = password
 EMAIL_USE_TLS = True
 
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

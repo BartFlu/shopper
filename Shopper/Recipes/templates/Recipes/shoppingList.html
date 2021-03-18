@@ -1,0 +1,32 @@
+{% extends './base.html' %}
+
+{% block title %}Lista zakupów {% endblock %}
+{% block body %}
+  <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Nazwa</th>
+      <th scope="col">Uwagi</th>
+      <th scope="col">Akcja</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in list %}
+    <tr>
+      <td>{{item}}</td>
+        <td><form class="" action="{% url 'add_comment' pk=item.pk %}" method="post">
+          {% csrf_token %}
+        <input type="text" name="comment" value="{% if item.comments %}{{item.comments}}{% endif %}">
+        <input type="submit" name="" value="Dodaj">
+      </form></td>
+      <td><a href="{% url 'removeFromList' pk=item.pk %}"><button type="button" class="btn btn-danger">Usuń z listy</button></a></td>
+    </tr>
+    {% endfor %}
+
+  <form class="" action="{% url 'sendList' %}" method="post">
+    {% csrf_token %}
+    <label for="email">Podaj email</label>
+    <input type="email" name="email" value="">
+    <input type="submit" name="" value="Wyślij">
+  </form>
+{% endblock %}
