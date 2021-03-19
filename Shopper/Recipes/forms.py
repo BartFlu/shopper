@@ -5,7 +5,6 @@ from crispy_forms.layout import Layout, Field, Fieldset, Div, HTML, ButtonHolder
 from .custom_layout_object import *
 
 
-
 class IngredientForm(ModelForm):
 
     class Meta:
@@ -15,8 +14,6 @@ class IngredientForm(ModelForm):
 
 IngredientFormSet = inlineformset_factory(
     Recipe, Ingredient, form=IngredientForm, fields=['type', 'quantity', 'unit'], extra=1, can_delete=True)
-
-
 
 
 class RecipeForm(ModelForm):
