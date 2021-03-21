@@ -13,31 +13,37 @@ from .custom_sql import chain_filters
 class MainView(ListView):
     model = Recipe
     paginate_by = 14
-
     context_object_name = 'recipes'
     template_name = 'Recipes/main_view.html'
 
 
 class MainViewFiltered(ListView):
-    template_name = 'Recipes/main_view.html'
     paginate_by = 14
     context_object_name = 'recipes'
-
-    # todo zmodyfikować context tak żeby dodać do niego 'filtered':True
+    template_name = 'Recipes/main_view.html'
 
     def get_queryset(self):
         return Recipe.objects.filter(tags__in=[self.kwargs['tag']])
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        data = super().get_context_data(object_list=None, **kwargs)
+        data['filtered'] = 1
+        return data
 
-def advance_filter_view(request):
+
+def some_view(request):
+    return render(request, template_name='Recipes/advance_filter.html' )
+
+
+def advanced_filter_view(request):
 
     if request.method == 'POST':
+        # To distinguish forms check if 'Recipe_name' in post data
         phrase = request.POST.get('Recipe_name', None)
         if phrase:
             el_results = RecipeDocument.search().query('match', name=phrase)
-            pks = [x.id for x in el_results]
-
-            results = Recipe.objects.filter(pk__in=pks)
+            r_ids = [x.id for x in el_results]  # Elastic store only names and ids
+            results = Recipe.objects.filter(pk__in=r_ids)  # to provide full functionality load from db
 
             tag_form = FilterForm()
             tags = Tag.objects.all()
@@ -47,23 +53,26 @@ def advance_filter_view(request):
                                                                                          'results': results
                                                                                          })
 
-        else:
+        else:  # search by tags
 
             tag_form = FilterForm(request.POST)
+            results = None
+            tags = Tag.objects.all()
+
             if tag_form.is_valid():
                 search_tags = [x for x in tag_form.cleaned_data.get('Tags')]
-                results = None
+
                 for tag in search_tags:
                     results = Recipe.objects.filter(tags=tag)
 
                 tag_form = FilterForm()
-                tags = Tag.objects.all()
 
-                return render(request, template_name='Recipes/advance_filter.html', context={'form': tag_form,
-                                                                                             'tags': tags,
-                                                                                             'results': results
-                                                                                             })
+            return render(request, template_name='Recipes/advance_filter.html', context={'form': tag_form,
+                                                                                         'tags': tags,
+                                                                                         'results': results
+                                                                                         })
     else:
+
         form = FilterForm()
         tags = Tag.objects.all()
 
@@ -72,28 +81,6 @@ def advance_filter_view(request):
                                                                                      })
 
 
-# def advance_filter_view(request):
-#
-#     if request.method == 'POST':
-#         form = FilterForm(request.POST)
-#         if form.is_valid():
-#             tags = [x for x in form.cleaned_data.get('Tags')]
-#             print(type(tags[0]))
-#
-#
-#         recipes = Recipe.objects.all()
-#         tags = Tag.objects.all()
-#         return render(request, template_name='Recipes/advance_filter.html', context={'recipes': recipes,
-#                                                                                      'tags': tags,
-#                                                                                      'form': form})
-#     else:
-#
-#         form = FilterForm()
-#         recipes = Recipe.objects.all()
-#         tags = Tag.objects.all()
-#         return render(request, template_name='Recipes/advance_filter.html', context={'recipes': recipes,
-#                                                                                      'tags': tags,
-#                                                                                      'form': form})
 
 
 def add_to_basket(request, pk):
