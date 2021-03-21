@@ -24,9 +24,9 @@
           {%endif%}</td>
       <td>{{r.last_used_info}}</td>
       {% if r.chosen == True %}
-      <td><a href="{% url 'removeFromBasket' pk=r.pk %}"><button type="button" class="btn btn-danger">Usuń z koszyka</button></a></td>
+      <td><a href="{% url 'removeFromBasket' pk=r.pk %}"><button type="button" class="btn btn-danger">Usuń z wybranych</button></a></td>
       {% else %}
-      <td><a href="{% url 'addToBasket' pk=r.pk %}"><button type="button" class="btn btn-success">Dodaj do koszyka</button></a></td>
+      <td><a href="{% url 'addToBasket' pk=r.pk %}"><button type="button" class="btn btn-success">Dodaj do wybranych</button></a></td>
       {% endif %}
     </tr>
     {% endfor %}
@@ -34,7 +34,7 @@
   </tbody>
 </table>
 
-  <a href="{% url 'basket' %}"><button type="button" class="btn btn-primary">Przejdź do koszyka</button></a>
+  <a href="{% url 'basket' %}"><button type="button" class="btn btn-primary">Przejdź do wybranych przepisów</button></a>
   <a href="{% url 'main' %}"><button type="button" class="btn btn-primary">Wyłącz filtrowanie</button></a>
   <a href="{% url 'add_recipe' %}"><button type="button" class="btn btn-primary">Dodaj przepis</button></a>
 

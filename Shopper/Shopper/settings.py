@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Recipes',
     'crispy_forms',
-    'dynamic_formsets'
+    'dynamic_formsets',
+    'django_elasticsearch_dsl'
 ]
 
 MIDDLEWARE = [
@@ -164,4 +165,11 @@ EMAIL_HOST_USER = login
 EMAIL_HOST_PASSWORD = password
 EMAIL_USE_TLS = True
 
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_TEMPLATE_PACK = 'bootstrap'
+
+
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': 'localhost:9200'
+    },
+}

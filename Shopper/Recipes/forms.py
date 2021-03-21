@@ -1,22 +1,23 @@
 from .models import Tag, Category, Product, Ingredient, Recipe
-from django.forms import inlineformset_factory, ModelForm
+from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field, Fieldset, Div, HTML, ButtonHolder, Submit
 from .custom_layout_object import *
+from .models import Tag
 
 
-class IngredientForm(ModelForm):
+class IngredientForm(forms.ModelForm):
 
     class Meta:
         model = Ingredient
         exclude = ()
 
 
-IngredientFormSet = inlineformset_factory(
+IngredientFormSet = forms.inlineformset_factory(
     Recipe, Ingredient, form=IngredientForm, fields=['type', 'quantity', 'unit'], extra=1, can_delete=True)
 
 
-class RecipeForm(ModelForm):
+class RecipeForm(forms.ModelForm):
 
     class Meta:
         model = Recipe
@@ -40,3 +41,9 @@ class RecipeForm(ModelForm):
                 ButtonHolder(Submit('submit', 'Zapisz')),
                 )
             )
+
+
+class FilterForm(forms.Form):
+
+    Tags = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple,
+                                          queryset=Tag.objects.all())

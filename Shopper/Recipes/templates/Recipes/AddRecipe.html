@@ -3,12 +3,15 @@
 {% block title%}Dodaj przepis {% endblock%}
 {% block body %}
 <div class="container">
+  <h4>Przed edycją przepisu upewnij się, że produkty, których potrzebujesz są w bazie</h4>
+  <p><a href="{% url 'addProduct' %}"><button type="button" class="btn btn-primary" name="button">Dodaj produkt</button></a></p>
+
     <div class="form-group">
 
              {% crispy form %}
     </div>
 </div>
 <br>
-  <p><a href="{% url 'addProduct' %}"><button type="button" class="btn btn-primary" name="button">Dodaj produkt</button></a></p>
+
 
 {% endblock  %}

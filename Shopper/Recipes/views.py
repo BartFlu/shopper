@@ -1,11 +1,13 @@
-from django.shortcuts import HttpResponseRedirect
+from django.shortcuts import HttpResponseRedirect, render
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
-from .models import Recipe, Ingredient, ShoppingList, Product
+from .models import Recipe, Ingredient, ShoppingList, Product, Tag
 from django.shortcuts import get_object_or_404
 from .tasks import send_mail_and_clear_baset
-from .forms import IngredientFormSet, RecipeForm
+from .forms import IngredientFormSet, RecipeForm, FilterForm
 from django.urls import reverse_lazy, reverse
 from django.db import transaction
+from .documents import RecipeDocument
+from .custom_sql import chain_filters
 
 
 class MainView(ListView):
@@ -21,9 +23,77 @@ class MainViewFiltered(ListView):
     paginate_by = 14
     context_object_name = 'recipes'
 
+    # todo zmodyfikować context tak żeby dodać do niego 'filtered':True
+
     def get_queryset(self):
-        print(self.kwargs['tag'])
         return Recipe.objects.filter(tags__in=[self.kwargs['tag']])
+
+
+def advance_filter_view(request):
+
+    if request.method == 'POST':
+        phrase = request.POST.get('Recipe_name', None)
+        if phrase:
+            el_results = RecipeDocument.search().query('match', name=phrase)
+            pks = [x.id for x in el_results]
+
+            results = Recipe.objects.filter(pk__in=pks)
+
+            tag_form = FilterForm()
+            tags = Tag.objects.all()
+
+            return render(request, template_name='Recipes/advance_filter.html', context={'form': tag_form,
+                                                                                         'tags': tags,
+                                                                                         'results': results
+                                                                                         })
+
+        else:
+
+            tag_form = FilterForm(request.POST)
+            if tag_form.is_valid():
+                search_tags = [x for x in tag_form.cleaned_data.get('Tags')]
+                results = None
+                for tag in search_tags:
+                    results = Recipe.objects.filter(tags=tag)
+
+                tag_form = FilterForm()
+                tags = Tag.objects.all()
+
+                return render(request, template_name='Recipes/advance_filter.html', context={'form': tag_form,
+                                                                                             'tags': tags,
+                                                                                             'results': results
+                                                                                             })
+    else:
+        form = FilterForm()
+        tags = Tag.objects.all()
+
+        return render(request, template_name='Recipes/advance_filter.html', context={'form': form,
+                                                                                     'tags': tags,
+                                                                                     })
+
+
+# def advance_filter_view(request):
+#
+#     if request.method == 'POST':
+#         form = FilterForm(request.POST)
+#         if form.is_valid():
+#             tags = [x for x in form.cleaned_data.get('Tags')]
+#             print(type(tags[0]))
+#
+#
+#         recipes = Recipe.objects.all()
+#         tags = Tag.objects.all()
+#         return render(request, template_name='Recipes/advance_filter.html', context={'recipes': recipes,
+#                                                                                      'tags': tags,
+#                                                                                      'form': form})
+#     else:
+#
+#         form = FilterForm()
+#         recipes = Recipe.objects.all()
+#         tags = Tag.objects.all()
+#         return render(request, template_name='Recipes/advance_filter.html', context={'recipes': recipes,
+#                                                                                      'tags': tags,
+#                                                                                      'form': form})
 
 
 def add_to_basket(request, pk):

@@ -19,7 +19,7 @@ from Recipes import views
 
 urlpatterns = [
     path('', views.MainView.as_view(), name='main'),
-    path('/<tag>', views.MainViewFiltered.as_view(), name='main_filtered'),
+    path('filtered/<tag>', views.MainViewFiltered.as_view(), name='main_filtered'),
     path('addToBasket/<int:pk>', views.add_to_basket, name='addToBasket'),
     path('removeFromBasket/<int:pk>', views.remove_from_basket, name='removeFromBasket'),
     path('basket', views.BasketView.as_view(), name='basket'),
@@ -32,5 +32,6 @@ urlpatterns = [
     path('add_recipe', views.AddRecipe.as_view(), name='add_recipe'),
     path('update_recipe/<int:pk>', views.UpdateRecipe.as_view(), name='edit_recipe'),
     path('add_product', views.AddProduct.as_view(), name='addProduct'),
+    path('advance_filter', views.advance_filter_view, name='advance_filter'),
     path('admin/', admin.site.urls),
 ]
