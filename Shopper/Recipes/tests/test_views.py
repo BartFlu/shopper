@@ -26,7 +26,7 @@ class RecipesListViewTest(TestCase):
     def test_pagination(self):
         response = self.client.get(reverse('main'))
         self.assertTrue('is_paginated' in response.context)
-        self.assertTrue(response.context['is_paginated'] == True)
+        self.assertEqual(response.context['is_paginated'], True)
         self.assertTrue(len(response.context['recipes']) == 14)
 
     def test_correct_template(self):
@@ -34,6 +34,7 @@ class RecipesListViewTest(TestCase):
         self.assertTemplateUsed(response, 'Recipes/main_view.html')
 
 
+# noinspection SpellCheckingInspection
 class FilteredRecipesViewsTest(TestCase):
 
     @classmethod
@@ -49,7 +50,7 @@ class FilteredRecipesViewsTest(TestCase):
         r.tags.add(t1, t2)
         r.save()
 
-        r, created = Recipe.objects.get_or_create(name='Frytki')
+        Recipe.objects.create(name='Frytki')
 
     def test_view_url_exists_at_desired_location(self):
         response = self.client.get('/filtered/1')
@@ -80,9 +81,32 @@ class FilteredRecipesViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
+class BasketViewTests(TestCase):
 
+    @classmethod
+    def setUpTestData(cls):
+        Recipe.objects.create(name='basket')
 
+    def test_mark_as_chosen(self):
+        r = Recipe.objects.get(name='basket')
+        self.client.get(f'addToBasket/{r.id}')
+        self.assertTrue(r.chosen)
 
+    def test_unmark_as_chosen(self):
+        r = Recipe.objects.get(name='basket')
+        self.client.get(f'removeFromBasket/{r.id}')
+        self.assertFalse(r.chosen)
 
+    def test_basket_access_by_url(self):
+        response = self.client.get('/basket')
+        self.assertEqual(response.status_code, 200)
 
+    def test_basket_access_by_name(self):
+        response = self.client.get(reverse('basket'))
+        self.assertEqual(response.status_code, 200)
 
+    def test_basket_context_object_name(self):
+        r = Recipe.objects.get(name='basket')
+        self.client.get(f'addToBasket/{r.id}')
+        response = self.client.get(reverse('basket'))
+        self.assertTrue(response.context['recipes'] == 1)
