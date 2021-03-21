@@ -6,7 +6,7 @@ from .models import Recipe, Product
 @registry.register_document
 class ProductDocument(Document):
     class Index:
-        name = 'products' # name of elastic index
+        name = 'products'  # name of elastic index
         settings = {
             'number_of_shards': 1,
             'number_of_replicas': 0

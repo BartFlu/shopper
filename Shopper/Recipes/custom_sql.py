@@ -10,5 +10,5 @@ def chain_filters(cls, column, operator, value_list):
     myfilter = column + '__' + operator
     query = cls.objects
     for value in value_list:
-        query = query.filter(**{myfilter:value})
+        query = query.filter(**{myfilter: value})
     return query

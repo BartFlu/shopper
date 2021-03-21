@@ -7,7 +7,6 @@ from .forms import IngredientFormSet, RecipeForm, FilterForm
 from django.urls import reverse_lazy, reverse
 from django.db import transaction
 from .documents import RecipeDocument
-from .custom_sql import chain_filters
 
 
 class MainView(ListView):
@@ -31,13 +30,13 @@ class MainViewFiltered(ListView):
         return data
 
 
-def some_view(request):
-    return render(request, template_name='Recipes/advance_filter.html' )
-
-
 def advanced_filter_view(request):
 
     if request.method == 'POST':
+        tag_form = FilterForm(request.POST)
+        results = None
+        tags = Tag.objects.all()
+
         # To distinguish forms check if 'Recipe_name' in post data
         phrase = request.POST.get('Recipe_name', None)
         if phrase:
@@ -48,29 +47,17 @@ def advanced_filter_view(request):
             tag_form = FilterForm()
             tags = Tag.objects.all()
 
-            return render(request, template_name='Recipes/advance_filter.html', context={'form': tag_form,
-                                                                                         'tags': tags,
-                                                                                         'results': results
-                                                                                         })
-
         else:  # search by tags
-
-            tag_form = FilterForm(request.POST)
-            results = None
-            tags = Tag.objects.all()
-
             if tag_form.is_valid():
                 search_tags = [x for x in tag_form.cleaned_data.get('Tags')]
 
-                for tag in search_tags:
+                for tag in search_tags:  # cascade filtering to match only these records that match all tags
                     results = Recipe.objects.filter(tags=tag)
 
-                tag_form = FilterForm()
-
-            return render(request, template_name='Recipes/advance_filter.html', context={'form': tag_form,
-                                                                                         'tags': tags,
-                                                                                         'results': results
-                                                                                         })
+        return render(request, template_name='Recipes/advance_filter.html', context={'form': tag_form,
+                                                                                     'tags': tags,
+                                                                                     'results': results
+                                                                                     })
     else:
 
         form = FilterForm()
@@ -79,8 +66,6 @@ def advanced_filter_view(request):
         return render(request, template_name='Recipes/advance_filter.html', context={'form': form,
                                                                                      'tags': tags,
                                                                                      })
-
-
 
 
 def add_to_basket(request, pk):
@@ -124,9 +109,10 @@ def convert_to_shopping_list(request):
     for r in recipes:
         ingredients = Ingredient.objects.filter(recipe=r)
         for i in ingredients:
-            slist, created = ShoppingList.objects.get_or_create(type=i.type, unit=i.unit)
-            slist.quantity += i.quantity
-            slist.save()
+            # sum up similar ingredients
+            shopping_list_item, created = ShoppingList.objects.get_or_create(type=i.type, unit=i.unit)
+            shopping_list_item.quantity += i.quantity
+            shopping_list_item.save()
     return HttpResponseRedirect(reverse('shoppingList'))
 
 
@@ -142,27 +128,15 @@ class ShoppingListView(ListView):
 
 def send_list(request):
     """
-    TODO: form.clean_data?
     :param request:
     :return:
     """
     if request.method == 'POST':
 
         email = request.POST.get('email')
-        text = make_shopping_list()
-        send_mail_and_clear_baset.delay(text, email)
+        send_mail_and_clear_baset.delay(email)
 
         return HttpResponseRedirect(reverse('main'))
-
-
-def make_shopping_list():
-    text = ''
-    lines = ShoppingList.objects.all()
-    for line in lines:
-        text = text + line.to_string() + '\n'
-        if line.comments:
-            text = text + 'Uwagi: ' + line.comments + '\n'
-    return text
 
 
 def add_comment_to_shopping_item(request, pk):
@@ -245,4 +219,3 @@ class AddProduct(CreateView):
 
     def get_success_url(self):
         return reverse('addProduct')
-

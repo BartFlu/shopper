@@ -43,7 +43,8 @@ class Recipe(models.Model):
     def __str__(self):
         return self.name
 
-    def get_absolute_url(self):
+    @staticmethod
+    def get_absolute_url():
         return reverse('main')
 
     def last_used_info(self):
@@ -57,10 +58,6 @@ class Recipe(models.Model):
             return 'Używane 2 tygodnie temu'
         else:
             return 'Używane ponad 2 tygodnie temu'
-
-
-
-
 
 
 class Ingredient(models.Model):
@@ -101,13 +98,9 @@ class ShoppingList(models.Model):
     def __str__(self):
         return f'{self.type} - {self.quantity} {self.get_unit_display()}'
 
-    def delete_everything(self):
+    @staticmethod
+    def delete_everything():
         ShoppingList.objects.all().delete()
-
 
     def to_string(self):
         return self.__str__()
-
-
-
-
