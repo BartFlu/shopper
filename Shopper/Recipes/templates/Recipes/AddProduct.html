@@ -1,0 +1,14 @@
+{% extends './base.html' %}
+
+{%block title %} Dodaj produkt {%endblock%}
+
+{% block body %}
+<form class=""  method="post">
+  <div class="form-group">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" name="" value="Dodaj" class="btn btn-primary" >
+    <a href="{% url 'add_recipe' %}"><button type="button"  class='btn btn-primary' name="button">Wróć do edycji przepisu</button></a>
+  </div>
+</form>
+{% endblock %}

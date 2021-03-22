@@ -1,0 +1,76 @@
+{% extends './base.html' %}
+
+{%block title %} Wyszukaj przepis {%endblock%}
+
+{%block body%}
+
+
+
+<div class="row">
+  <div class="col">
+    <form method="post" action="{% url 'advanced_filter' %}">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="Recipe_name">Wyszukaj przpis</label>
+        <input class="form-control" type="text" name="Recipe_name" value="">
+        <br>
+        <input class="btn btn-primary" type="submit" name="" value="Szukaj po nazwie">
+      </div>
+    </form>
+  </div>
+  <div class="col">
+    <form  method="post">
+      <div class="form-group">
+        {% csrf_token %}
+        <div class="mb-3" >
+        {{form.as_p}}
+        </div>
+        <button type="submit" class="btn btn-primary">Szukaj po tagach</button>
+      </div>
+    </form>
+  </div>
+
+</div>
+
+
+
+
+<table class="table">
+<thead>
+  <tr>
+    <th scope="col">Nazwa</th>
+    <th scope="col">Tagi</th>
+    <th scope="col">Ostatnio używany</th>
+    <th scope="col">Akcja</th>
+  </tr>
+</thead>
+<tbody>
+  {% if results %}
+  {% for r in results %}
+  <tr>
+    <td><a href="{% url 'recipe' pk=r.pk %}">{{r.name}}</a></td>
+    <td>{% if r.tags %}
+      {% for t in r.tags.all%}
+      {{t}}
+      {% endfor %}
+       {% else %}
+       Brak tagów
+        {%endif%}</td>
+    <td>{{r.last_used_info}}</td>
+    {% if r.chosen == True %}
+    <td><a href="{% url 'removeFromBasket' pk=r.pk %}"><button type="button" class="btn btn-danger">Usuń z koszyka</button></a></td>
+    {% else %}
+    <td><a href="{% url 'addToBasket' pk=r.pk %}"><button type="button" class="btn btn-success">Dodaj do koszyka</button></a></td>
+    {% endif %}
+  </tr>
+  {% endfor %}
+  {% endif %}
+
+</tbody>
+</table>
+
+<a href="{% url 'basket' %}"><button type="button" class="btn btn-primary">Przejdź do koszyka</button></a>
+<a href="{% url 'main' %}"><button type="button" class="btn btn-primary">Wyłącz filtrowanie</button></a>
+<a href="{% url 'add_recipe' %}"><button type="button" class="btn btn-primary">Dodaj przepis</button></a>
+
+{%endblock%}
