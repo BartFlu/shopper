@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'dynamic_formsets',
     'django_elasticsearch_dsl',
     'rest_framework',
+    'django_extensions'
 ]
 
 MIDDLEWARE = [
