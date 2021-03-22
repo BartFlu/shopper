@@ -102,6 +102,12 @@ if os.environ.get('MY_CONFIG'):
     CELERY_RESULT_SERIALIZER = 'json'
     CELERY_TIMEZONE = 'Europe/Warsaw'
 
+    ELASTICSEARCH_DSL = {
+        'default': {
+            'hosts': 'localhost:9200'
+        },
+    }
+
 
 else:
     DATABASES = {
@@ -121,6 +127,12 @@ else:
     CELERY_TASK_SERIALIZER = 'json'
     CELERY_RESULT_SERIALIZER = 'json'
     CELERY_TIMEZONE = 'Europe/Warsaw'
+
+    ELASTICSEARCH_DSL = {
+        'default': {
+            'hosts': 'elastic:9200'
+        },
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators

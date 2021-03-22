@@ -40,9 +40,13 @@ def advanced_filter_view(request):
         # To distinguish forms check if 'Recipe_name' in post data
         phrase = request.POST.get('Recipe_name', None)
         if phrase:
-            el_results = RecipeDocument.search().query('match', name=phrase)
-            r_ids = [x.id for x in el_results]  # Elastic store only names and ids
-            results = Recipe.objects.filter(pk__in=r_ids)  # to provide full functionality load from db
+            try:
+                el_results = RecipeDocument.search().query('match', name=phrase)
+                r_ids = [x.id for x in el_results]  # Elastic store only names and ids
+                results = Recipe.objects.filter(pk__in=r_ids)  # to provide full functionality load from db
+            except ConnectionError:
+                results = Recipe.objects.filter(name__contains=phrase)
+
 
             tag_form = FilterForm()
             tags = Tag.objects.all()
