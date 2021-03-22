@@ -20,7 +20,8 @@ class Category(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=200, verbose_name='Nazwa', unique=True)
-    category = models.ForeignKey(Category, verbose_name='Kategoria', on_delete=models.DO_NOTHING)
+    category = models.ForeignKey(Category, verbose_name='Kategoria', on_delete=models.DO_NOTHING,
+                                 related_name='products')
 
     def __str__(self):
         return self.name
@@ -32,7 +33,7 @@ class Product(models.Model):
 class Recipe(models.Model):
     name = models.CharField(max_length=100, verbose_name='Nazwa')
     source = models.URLField(verbose_name='Źródło', blank=True)
-    tags = models.ManyToManyField(Tag, verbose_name='Tagi')
+    tags = models.ManyToManyField(Tag, verbose_name='Tagi', related_name='recipes')
     added = models.DateTimeField(auto_now_add=True)
     last_used = models.DateField(null=True, blank=True)
     chosen = models.BooleanField(default=False)

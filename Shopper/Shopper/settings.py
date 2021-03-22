@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'Recipes',
     'crispy_forms',
     'dynamic_formsets',
-    'django_elasticsearch_dsl'
+    'django_elasticsearch_dsl',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
