@@ -21,10 +21,16 @@ How to run
   With Docker:
   1. Clone the repository. Go to './shopper/Shopper' directory and run 'docker-compose build' 
   3. Run 'docker-compose up'. Once all the containers are up and running open django cli and run
-     python manage.py makemigrations
+  
+    ``` python manage.py makemigrations
+    
      python manage.py migrate
-     python manage.py search_engine --rebuild - Note. This command often causes errors when running in docker-compose. However the program can run without it until I find the cause.  
-     python manage.py runscript add_tags_and_categories
+    
+     python manage.py search_engine --rebuild
+    
+    - Note. This command often causes errors when running in docker-compose. However the program can run without it until I find the cause.  
+   
+     python manage.py runscript add_tags_and_categories```
 
      
   5. App is running at http://localhost:8000
