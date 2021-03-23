@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from Recipes.models import Recipe, Tag
+from Recipes.models import Recipe, Tag, Category, Product, Ingredient
 
 
 class RecipesListViewTest(TestCase):
@@ -93,7 +93,6 @@ class BasketViewTests(TestCase):
         r = Recipe.objects.get(name='basket')
         self.assertEqual(r.chosen, True)
 
-    # todo method is working but the test fails. investigate
     def test_basket_context_object_name(self):
         r = Recipe.objects.get(name='basket')
         self.client.get(reverse('addToBasket', kwargs={"pk": r.pk}))
@@ -114,3 +113,23 @@ class BasketViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
+class RecipeViewTest(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        Recipe.objects.create(name='Detal')
+
+    def test_detailview_accessible_by_url(self):
+        r = Recipe.objects.get(name='Detal')
+        response = self.client.get(f'/recipe/{r.id}')
+        self.assertEqual(response.status_code, 200)
+
+    def test_detailview_accessible_by_name(self):
+        r = Recipe.objects.get(name='Detal')
+        response = self.client.get(reverse('recipe', kwargs={"pk": r.id}))
+        self.assertEqual(response.status_code, 200)
+
+    def test_ingredients_in_context_data(self):
+        r = Recipe.objects.get(name='Detal')
+        response = self.client.get(f'/recipe/{r.id}')
+        self.assertTrue(response.context['ingredients'])
