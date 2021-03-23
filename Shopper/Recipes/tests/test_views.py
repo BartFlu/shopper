@@ -95,8 +95,10 @@ class BasketViewTests(TestCase):
 
     # todo method is working but the test fails. investigate
     def test_basket_context_object_name(self):
+        r = Recipe.objects.get(name='basket')
+        self.client.get(reverse('addToBasket', kwargs={"pk": r.pk}))
         response = self.client.get(reverse('basket'))
-        self.assertTrue(response.context['recipes'] == 1)
+        self.assertTrue(response.context['recipes'])
 
     def test_unmark_as_chosen(self):
         r = Recipe.objects.get(name='basket')
