@@ -1,5 +1,5 @@
 from django.shortcuts import HttpResponseRedirect, render
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import Recipe, Ingredient, ShoppingList, Product, Tag
 from django.shortcuts import get_object_or_404
 from .tasks import send_mail_and_clear_basket
@@ -96,18 +96,6 @@ class BasketView(ListView):
         return Recipe.objects.filter(chosen=True)
 
 
-class RecipeDetails(DetailView):
-    model = Recipe
-    context_object_name = 'recipe'
-    template_name = 'Recipes/RecDetail.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        empty_ing_text = ("Ten przepis nie ma jeszcze składników", )
-        context['ingredients'] = Ingredient.objects.filter(recipe=self.get_object()) or empty_ing_text
-        return context
-
-
 def convert_to_shopping_list(request):
 
     recipes = Recipe.objects.filter(chosen=True)
@@ -160,6 +148,18 @@ def remove_from_shopping_list(request, pk):
     item.delete()
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+
+class RecipeDetails(DetailView):
+    model = Recipe
+    context_object_name = 'recipe'
+    template_name = 'Recipes/RecDetail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        empty_ing_text = ("Ten przepis nie ma jeszcze składników", )
+        context['ingredients'] = Ingredient.objects.filter(recipe=self.get_object()) or empty_ing_text
+        return context
 
 
 class AddRecipe(CreateView):
@@ -216,6 +216,11 @@ class UpdateRecipe(UpdateView):
 
     def get_success_url(self):
         return reverse_lazy('recipe', kwargs={'pk': self.object.pk})
+
+
+class DeleteRecipeView(DeleteView):
+    model = Recipe
+    success_url = reverse_lazy('main')
 
 
 class AddProduct(CreateView):

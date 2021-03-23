@@ -10,5 +10,6 @@
   <li>{{ing}}</li>
   {% endfor %}
 </ul>
-<a href="{% url 'edit_recipe' pk=recipe.pk %}">Edytuj przepis</a>
+<a class ='btn btn-primary' href="{% url 'edit_recipe' pk=recipe.pk %}">Edytuj przepis</a>
+<a class ='btn btn-danger' href="{% url 'remove_recipe' pk=recipe.pk %}">Usuń przepis</a>
 {% endblock %}
