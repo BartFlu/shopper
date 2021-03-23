@@ -103,7 +103,8 @@ class RecipeDetails(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['ingredients'] = Ingredient.objects.filter(recipe=self.get_object())
+        empty_ing_text = ("Ten przepis nie ma jeszcze składników", )
+        context['ingredients'] = Ingredient.objects.filter(recipe=self.get_object()) or empty_ing_text
         return context
 
 
