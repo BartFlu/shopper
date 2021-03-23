@@ -87,12 +87,16 @@ class BasketViewTests(TestCase):
     def setUpTestData(cls):
         Recipe.objects.create(name='basket')
 
-    # todo method is working but the test fails. investigate
-    # def test_mark_as_chosen(self):
-    #     r = Recipe.objects.get(name='basket')
-    #     self.client.get(f'addToBasket/{r.id}')
-    #     self.assertTrue(r.chosen)
+    def test_mark_as_chosen(self):
+        r = Recipe.objects.get(name='basket')
+        self.client.get(reverse('addToBasket', kwargs={"pk": r.pk}))
+        r = Recipe.objects.get(name='basket')
+        self.assertEqual(r.chosen, True)
 
+    # todo method is working but the test fails. investigate
+    def test_basket_context_object_name(self):
+        response = self.client.get(reverse('basket'))
+        self.assertTrue(response.context['recipes'] == 1)
 
     def test_unmark_as_chosen(self):
         r = Recipe.objects.get(name='basket')
@@ -107,9 +111,4 @@ class BasketViewTests(TestCase):
         response = self.client.get(reverse('basket'))
         self.assertEqual(response.status_code, 200)
 
-    # todo method is working but the test fails. investigate
-    # def test_basket_context_object_name(self):
-    #     r = Recipe.objects.get(name='basket')
-    #     self.client.get(f'addToBasket/{r.id}')
-    #     response = self.client.get(reverse('basket'))
-    #     self.assertTrue(response.context['recipes'] == 1)
+
