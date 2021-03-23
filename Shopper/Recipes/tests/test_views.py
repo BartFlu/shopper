@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from Recipes.models import Recipe, Tag, Category, Product, Ingredient
+from Recipes.models import Recipe, Tag, Category, Product, Ingredient, ShoppingList
 
 
 class RecipesListViewTest(TestCase):
@@ -133,3 +133,53 @@ class RecipeViewTest(TestCase):
         r = Recipe.objects.get(name='Detal')
         response = self.client.get(f'/recipe/{r.id}')
         self.assertTrue(response.context['ingredients'])
+
+
+class ShoppingListTest(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        Category.objects.create(category='cTest')
+        Product.objects.create(name='pTest', category=Category.objects.get(category='cTest'))
+        Recipe.objects.create(name='rTest', chosen=True)
+        Ingredient.objects.create(type=Product.objects.get(name='pTest'),
+                                  quantity=15,
+                                  unit=1,
+                                  recipe=Recipe.objects.get(name='rTest'))
+
+    def test_convert_to_shopping_list(self):
+        self.client.get(reverse("convert"))
+        shopping_item = ShoppingList.objects.first()
+        self.assertIsNot(shopping_item, None)
+
+    def test_shopping_list_access_by_url(self):
+        response = self.client.get('/shoppingList')
+        self.assertEqual(response.status_code, 200)
+
+    def test_shopping_list_access_by_name(self):
+        response = self.client.get(reverse('shoppingList'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_context_object_name(self):
+        self.client.get(reverse("convert"))
+        response = self.client.get(reverse('shoppingList'))
+        self.assertTrue(response.context['list'])
+
+    def test_add_comment_to_shopping_item(self):
+        self.client.get(reverse("convert"))
+        shopping_item = ShoppingList.objects.first()
+        self.client.post(f"/addComment/{shopping_item.id}", data={'comment': 'test_comment'})
+        shopping_item = ShoppingList.objects.first()
+        self.assertTrue(shopping_item.comments)
+
+    def test_remove_from_shopping_list(self):
+        self.client.get(reverse("convert"))
+        shopping_item = ShoppingList.objects.first()
+        self.client.get(f'/deleteShoppingItem/{shopping_item.id}')
+        shopping_item = ShoppingList.objects.first()
+        self.assertIsNone(shopping_item)
+
+
+
+
+

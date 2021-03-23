@@ -12,8 +12,6 @@ class RecipeAndIngredientsTestClass(TestCase):
         p, created = Product.objects.get_or_create(name='test_product2', category=c)
         Ingredient.objects.create(type=p, quantity=15, unit=1, recipe=r)
 
-
-
     def test_name_label(self):
         r = Recipe.objects.get(pk=1)
         name_label = r._meta.get_field('name').verbose_name

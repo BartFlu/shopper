@@ -2,7 +2,7 @@ from django.shortcuts import HttpResponseRedirect, render
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from .models import Recipe, Ingredient, ShoppingList, Product, Tag
 from django.shortcuts import get_object_or_404
-from .tasks import send_mail_and_clear_baset
+from .tasks import send_mail_and_clear_basket
 from .forms import IngredientFormSet, RecipeForm, FilterForm
 from django.urls import reverse_lazy, reverse
 from django.db import transaction
@@ -136,10 +136,11 @@ def send_list(request):
     :param request:
     :return:
     """
+    #todo use django email form
     if request.method == 'POST':
 
         email = request.POST.get('email')
-        send_mail_and_clear_baset.delay(email)
+        send_mail_and_clear_basket.delay(email)
 
         return HttpResponseRedirect(reverse('main'))
 

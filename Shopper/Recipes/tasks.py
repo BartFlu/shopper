@@ -5,7 +5,7 @@ from django.core.mail import send_mail
 
 
 @shared_task
-def send_mail_and_clear_baset(email: str):
+def send_mail_and_clear_basket(email: str):
     sended = True
     text = make_shopping_list()
     try:
