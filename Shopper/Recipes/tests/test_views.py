@@ -180,6 +180,27 @@ class ShoppingListTest(TestCase):
         self.assertIsNone(shopping_item)
 
 
+class ProductsListViewTest(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        Category.objects.create(category='TestCat')
+        Product.objects.create(name='Milk', category=Category.objects.get(category='TestCat'))
+
+    def test_view_access_by_url(self):
+        response = self.client.get('/products')
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_access_by_name(self):
+        response = self.client.get(reverse('products'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_context_object_name(self):
+        response = self.client.get(reverse('products'))
+        self.assertTrue(response.context['categories'])
+
+
+
 
 
 

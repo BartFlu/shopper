@@ -1,9 +1,9 @@
 from django.shortcuts import HttpResponseRedirect, render
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Recipe, Ingredient, ShoppingList, Product, Tag
+from .models import Recipe, Ingredient, ShoppingList, Product, Tag, Category
 from django.shortcuts import get_object_or_404
 from .tasks import send_mail_and_clear_basket
-from .forms import IngredientFormSet, RecipeForm, FilterForm
+from .forms import IngredientFormSet, RecipeForm, FilterForm, ProductFormSet
 from django.urls import reverse_lazy, reverse
 from django.db import transaction
 from .documents import RecipeDocument
@@ -230,3 +230,25 @@ class AddProduct(CreateView):
 
     def get_success_url(self):
         return reverse('addProduct')
+
+
+def categories_and_products(request):
+    if request.method == 'POST':
+
+        category_id = request.POST.get('parent')
+        category = Category.objects.get(pk=category_id)
+        formset = ProductFormSet(request.POST, request.FILES, instance=category)
+        if formset.is_valid():
+            formset.save()
+
+        return HttpResponseRedirect(reverse('products'))
+
+    else:
+        categories = Category.objects.all()
+        form = ProductFormSet()
+        context = {
+            'categories': categories,
+            'form': form,
+        }
+
+        return render(request, 'Recipes/categories_and_products.html', context)

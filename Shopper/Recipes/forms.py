@@ -1,4 +1,4 @@
-from .models import Ingredient, Recipe
+from .models import Ingredient, Recipe, Category, Product
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field, Fieldset, Div, HTML, ButtonHolder, Submit
@@ -47,3 +47,6 @@ class FilterForm(forms.Form):
 
     Tags = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple,
                                           queryset=Tag.objects.all())
+
+
+ProductFormSet = forms.inlineformset_factory(Category, Product, fields=('name',), extra=1, can_delete=False)
