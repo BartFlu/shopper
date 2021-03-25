@@ -15,7 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from Recipes import views
+from Recipes import views, view_auth
+
 
 urlpatterns = [
     path('', views.MainView.as_view(), name='main'),
@@ -36,5 +37,7 @@ urlpatterns = [
     path('deleteShoppingItem/<int:pk>', views.remove_from_shopping_list, name='removeFromList'),
     path('addProduct', views.AddProduct.as_view(), name='addProduct'),
     path('api/', include('Recipes.api_urls')),
+    path('register/', view_auth.register, name='register'),
+    path('login/', view_auth.user_login, name='login'),
     path('admin/', admin.site.urls),
 ]
