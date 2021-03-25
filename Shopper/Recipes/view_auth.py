@@ -1,0 +1,51 @@
+from django.shortcuts import HttpResponseRedirect, reverse, render
+from django.contrib.auth import authenticate, login
+from .forms import UserForm, LoginForm
+
+
+def register(request):
+
+    if request.method == 'POST':
+        form = UserForm(request.POST)
+
+        if form.is_valid():
+            user = form.save()
+            user.set_password(user.password)
+            user.save()
+
+            return HttpResponseRedirect(reverse('main'))
+        else:
+
+            return render(request, 'Recipes/auth/register.html', context={'errors': form.errors})
+
+    else:
+        form = UserForm()
+        context_dict = {'form': form}
+
+        return render(request, 'Recipes/auth/register.html', context=context_dict)
+
+
+def user_login(request):
+
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+
+            user = authenticate(request, username=username, password=password)
+            if user:
+                login(request, user)
+
+            return HttpResponseRedirect(reverse('main'))
+        else:
+
+            return render(request, 'Recipes/auth/login.html', context={'errors': form.errors})
+
+    else:
+        form = LoginForm()
+        context = {'form': form}
+
+        return render(request, 'Recipes/auth/login.html', context=context)
+

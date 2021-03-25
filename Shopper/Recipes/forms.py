@@ -1,4 +1,5 @@
 from .models import Ingredient, Recipe, Category, Product
+from django.contrib.auth.models import User
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field, Fieldset, Div, HTML, ButtonHolder, Submit
@@ -50,3 +51,42 @@ class FilterForm(forms.Form):
 
 
 ProductFormSet = forms.inlineformset_factory(Category, Product, fields=('name',), extra=1, can_delete=False)
+
+
+class UserForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(UserForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
+
+    password = forms.CharField(widget=forms.PasswordInput(), label='Hasło')
+    confirm_password = forms.CharField(widget=forms.PasswordInput(), label='Potwierdź hasło')
+    username = forms.CharField(label='Nazwa użytkownika')
+    email = forms.EmailField(label='Email')
+
+    def clean(self):
+        cleaned_data = super(UserForm, self).clean()
+        password = cleaned_data.get("password")
+        confirm_password = cleaned_data.get("confirm_password")
+
+        if password != confirm_password:
+            raise forms.ValidationError(
+                "password and confirm_password does not match"
+            )
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password']
+
+
+class LoginForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+        super(LoginForm, self).__init__(*args, **kwargs)
+        for visible in self.visible_fields():
+            visible.field.widget.attrs['class'] = 'form-control'
+
+    username = forms.CharField(label='Nazwa użytkownika')
+    password = forms.CharField(widget=forms.PasswordInput(), label='Hasło')
+
