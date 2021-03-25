@@ -1,9 +1,14 @@
 from django.shortcuts import HttpResponseRedirect, reverse, render
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from .forms import UserForm, LoginForm
 
 
 def register(request):
+
+    if request.user.is_authenticated:
+
+        return HttpResponseRedirect(reverse('main'))
 
     if request.method == 'POST':
         form = UserForm(request.POST)
@@ -49,3 +54,9 @@ def user_login(request):
 
         return render(request, 'Recipes/auth/login.html', context=context)
 
+
+@login_required()
+def user_logout(request):
+    logout(request)
+
+    return HttpResponseRedirect(reverse('main'))
