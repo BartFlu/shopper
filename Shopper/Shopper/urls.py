@@ -39,5 +39,6 @@ urlpatterns = [
     path('api/', include('Recipes.api_urls')),
     path('register/', view_auth.register, name='register'),
     path('login/', view_auth.user_login, name='login'),
+    path('logout/', view_auth.user_logout, name='logout'),
     path('admin/', admin.site.urls),
 ]

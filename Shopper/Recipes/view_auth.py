@@ -18,7 +18,7 @@ def register(request):
             user.set_password(user.password)
             user.save()
 
-            return HttpResponseRedirect(reverse('main'))
+            return HttpResponseRedirect(reverse('login'))
         else:
 
             return render(request, 'Recipes/auth/register.html', context={'errors': form.errors})
@@ -49,6 +49,10 @@ def user_login(request):
             return render(request, 'Recipes/auth/login.html', context={'errors': form.errors})
 
     else:
+
+        if request.user.is_authenticated:
+            return HttpResponseRedirect(reverse('main'))
+
         form = LoginForm()
         context = {'form': form}
 

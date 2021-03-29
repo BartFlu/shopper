@@ -7,6 +7,8 @@ from .forms import IngredientFormSet, RecipeForm, FilterForm, ProductFormSet
 from django.urls import reverse_lazy, reverse
 from django.db import transaction
 from .documents import RecipeDocument
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class MainView(ListView):
@@ -30,6 +32,7 @@ class MainViewFiltered(ListView):
         return data
 
 
+@login_required()
 def advanced_filter_view(request):
 
     if request.method == 'POST':
@@ -72,6 +75,7 @@ def advanced_filter_view(request):
                                                                                      })
 
 
+@login_required()
 def add_to_basket(request, pk):
     r = get_object_or_404(Recipe, pk=pk)
     r.chosen = True
@@ -79,6 +83,7 @@ def add_to_basket(request, pk):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 
+@login_required()
 def remove_from_basket(request, pk):
     r = get_object_or_404(Recipe, pk=pk)
     r.chosen = False
@@ -86,7 +91,7 @@ def remove_from_basket(request, pk):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 
-class BasketView(ListView):
+class BasketView(LoginRequiredMixin, ListView):
     model = Recipe
     paginate_by = 20
     context_object_name = 'recipes'
@@ -96,6 +101,7 @@ class BasketView(ListView):
         return Recipe.objects.filter(chosen=True)
 
 
+@login_required()
 def convert_to_shopping_list(request):
 
     recipes = Recipe.objects.filter(chosen=True)
@@ -109,7 +115,7 @@ def convert_to_shopping_list(request):
     return HttpResponseRedirect(reverse('shoppingList'))
 
 
-class ShoppingListView(ListView):
+class ShoppingListView(LoginRequiredMixin, ListView):
     model = ShoppingList
     context_object_name = 'list'
     template_name = 'Recipes/shoppingList.html'
@@ -119,6 +125,7 @@ class ShoppingListView(ListView):
         return queryset
 
 
+@login_required()
 def send_list(request):
     """
     :param request:
@@ -133,6 +140,7 @@ def send_list(request):
         return HttpResponseRedirect(reverse('main'))
 
 
+@login_required()
 def add_comment_to_shopping_item(request, pk):
     if request.method == 'POST':
 
@@ -143,6 +151,7 @@ def add_comment_to_shopping_item(request, pk):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 
+@login_required()
 def remove_from_shopping_list(request, pk):
     item = ShoppingList.objects.get(pk=pk)
     item.delete()
@@ -150,7 +159,7 @@ def remove_from_shopping_list(request, pk):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 
-class RecipeDetails(DetailView):
+class RecipeDetails(LoginRequiredMixin, DetailView):
     model = Recipe
     context_object_name = 'recipe'
     template_name = 'Recipes/RecDetail.html'
@@ -162,7 +171,7 @@ class RecipeDetails(DetailView):
         return context
 
 
-class AddRecipe(CreateView):
+class AddRecipe(LoginRequiredMixin, CreateView):
     model = Recipe
     template_name = 'Recipes/AddRecipe.html'
     form_class = RecipeForm
@@ -190,7 +199,7 @@ class AddRecipe(CreateView):
         return reverse_lazy('recipe', kwargs={'pk': self.object.pk})
 
 
-class UpdateRecipe(UpdateView):
+class UpdateRecipe(LoginRequiredMixin, UpdateView):
     model = Recipe
     template_name = 'Recipes/AddRecipe.html'
     form_class = RecipeForm
@@ -218,12 +227,12 @@ class UpdateRecipe(UpdateView):
         return reverse_lazy('recipe', kwargs={'pk': self.object.pk})
 
 
-class DeleteRecipeView(DeleteView):
+class DeleteRecipeView(LoginRequiredMixin, DeleteView):
     model = Recipe
     success_url = reverse_lazy('main')
 
 
-class AddProduct(CreateView):
+class AddProduct(LoginRequiredMixin, CreateView):
     model = Product
     fields = ['name', 'category']
     template_name = 'Recipes/AddProduct.html'
@@ -232,6 +241,7 @@ class AddProduct(CreateView):
         return reverse('addProduct')
 
 
+@login_required()
 def categories_and_products(request):
     if request.method == 'POST':
 

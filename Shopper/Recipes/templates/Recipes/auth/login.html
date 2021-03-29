@@ -7,12 +7,16 @@
 
   </div>
   <div class="col-4">
-    <form method="post" action="{% url 'register' %}">
+    <form method="post" action="{% url 'login' %}">
       {% csrf_token %}
 
       {% for hidden_field in form.hidden_fields %}
         {{ hidden_field }}
       {% endfor %}
+
+      {% if form.errors %}
+      <p>Your username and password didn't match. Please try again.</p>
+      {% endif %}
 
       {% for field in form.visible_fields %}
         <div class="form-group">
@@ -25,7 +29,10 @@
       {% endfor %}
 
       <button type="submit" class="btn btn-primary form-control">Zaloguj</button>
+      <p></p>
+
     </form>
+    <a href="{% url 'register' %}">Rejestracja</a>
   </div>
   <div class="col-4">
 
