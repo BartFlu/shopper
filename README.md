@@ -28,8 +28,6 @@ How to run
     
      python manage.py search_engine --rebuild
     
-    - Note. This command often causes errors when running in docker-compose. However the program can run without it until I find the cause.  
-   
      python manage.py runscript add_tags_and_categories```
 
      
