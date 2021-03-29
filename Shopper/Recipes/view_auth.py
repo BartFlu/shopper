@@ -2,6 +2,8 @@ from django.shortcuts import HttpResponseRedirect, reverse, render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .forms import UserForm, LoginForm
+from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
 
 
 def register(request):
@@ -14,6 +16,9 @@ def register(request):
         form = UserForm(request.POST)
 
         if form.is_valid():
+            email = form.cleaned_data['email']
+            if User.objects.filter(email=email).exists():
+                raise ValidationError("Email exists")
             user = form.save()
             user.set_password(user.password)
             user.save()
