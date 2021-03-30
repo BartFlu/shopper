@@ -33,11 +33,11 @@ class RecipeForm(forms.ModelForm):
         self.helper.field_class = 'form-control'
         self.helper.layout = Layout(
             Div(
-                Field('name'),
-                Field('source'),
-                Field('tags'),
+                Field('name', css_class='form-control'),
+                Field('source', css_class='form-control'),
+                Field('tags', css_class='form-control'),
                 Fieldset('Dodaj składniki',
-                Formset('ingredients')),
+                Formset('ingredients'), css_class='form-control'),
                 HTML("<br>"),
                 ButtonHolder(Submit('submit', 'Zapisz')),
                 )
