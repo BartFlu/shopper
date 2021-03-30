@@ -20,7 +20,17 @@ Crawler that updates the prices of products in chosen stores
 How to run
   With Docker:
   1. Clone the repository. Go to './shopper/Shopper' directory and run 'docker-compose build' 
-  3. Run 'docker-compose up'. Once all the containers are up and running open django cli and run
+  2. Add file emailcred.py in ./Shopper/Shopper 
+    Fill it with ypur own email credentials or fake ones in that format
+    
+    ```
+    host = ''
+    port = <port_number>
+    login = ''
+    password = ''
+    ```
+    
+  4. Run 'docker-compose up'. Once all the containers are up and running open django cli and run
   
     ``` python manage.py makemigrations
     
@@ -34,6 +44,6 @@ How to run
   5. App is running at http://localhost:8000
   
   Warning: app is not configured for production use and should not be used in that way. 
-  Note: File with email credentials is for obvious reasons not a part of this repo. It should be added manually with one's credentials. 
+
 
   
