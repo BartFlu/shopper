@@ -2,6 +2,11 @@ from django.db import models
 from django.shortcuts import reverse
 from django.utils import timezone
 from datetime import date, timedelta
+from django.contrib.auth.models import Group, AbstractUser, User
+
+
+class MyUser(AbstractUser):
+    email = models.EmailField(unique=True)
 
 
 class Tag(models.Model):
@@ -13,6 +18,7 @@ class Tag(models.Model):
 
 class Category(models.Model):
     category = models.CharField(max_length=100, unique=True)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.category
@@ -22,6 +28,7 @@ class Product(models.Model):
     name = models.CharField(max_length=200, verbose_name='Nazwa', unique=True)
     category = models.ForeignKey(Category, verbose_name='Kategoria', on_delete=models.DO_NOTHING,
                                  related_name='products')
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -37,6 +44,7 @@ class Recipe(models.Model):
     added = models.DateTimeField(auto_now_add=True)
     last_used = models.DateField(null=True, blank=True)
     chosen = models.BooleanField(default=False)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['name']
@@ -76,6 +84,7 @@ class Ingredient(models.Model):
     quantity = models.PositiveIntegerField(verbose_name='Ilość')
     unit = models.IntegerField(choices=UNITS, verbose_name='Miara')
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.type} - {self.quantity} {self.get_unit_display()}'
@@ -95,6 +104,7 @@ class ShoppingList(models.Model):
     quantity = models.PositiveIntegerField(default=0)
     unit = models.IntegerField(choices=UNITS)
     comments = models.CharField(max_length=300, null=True)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.type} - {self.quantity} {self.get_unit_display()}'
