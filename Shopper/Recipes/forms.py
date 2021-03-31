@@ -53,10 +53,10 @@ class FilterForm(forms.Form):
 ProductFormSet = forms.inlineformset_factory(Category, Product, fields=('name',), extra=1, can_delete=False)
 
 
-class UserForm(forms.ModelForm):
+class RegisterForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
-        super(UserForm, self).__init__(*args, **kwargs)
+        super(RegisterForm, self).__init__(*args, **kwargs)
         for visible in self.visible_fields():
             visible.field.widget.attrs['class'] = 'form-control'
 
@@ -66,7 +66,7 @@ class UserForm(forms.ModelForm):
     email = forms.EmailField(label='Email')
 
     def clean(self):
-        cleaned_data = super(UserForm, self).clean()
+        cleaned_data = super(RegisterForm, self).clean()
         password = cleaned_data.get("password")
         confirm_password = cleaned_data.get("confirm_password")
 
