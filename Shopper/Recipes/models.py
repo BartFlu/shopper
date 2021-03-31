@@ -3,10 +3,9 @@ from django.shortcuts import reverse
 from django.utils import timezone
 from datetime import date, timedelta
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
 
-
-class MyUser(AbstractUser):
-    email = models.EmailField(unique=True)
+User._meta.get_field('email')._unique = True
 
 
 class Tag(models.Model):

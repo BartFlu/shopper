@@ -16,7 +16,10 @@
 
       {% if form.errors %}
       <p>Your username and password didn't match. Please try again.</p>
+      {% elif email_used %}
+      <p>{{ email_used}}</p>
       {% endif %}
+
 
       {% for field in form.visible_fields %}
         <div class="form-group">

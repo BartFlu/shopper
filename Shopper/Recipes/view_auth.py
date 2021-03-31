@@ -2,10 +2,6 @@ from django.shortcuts import HttpResponseRedirect, reverse, render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm, LoginForm
-from django.core.exceptions import ValidationError
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
 
 
 def register(request):
@@ -25,7 +21,10 @@ def register(request):
             return HttpResponseRedirect(reverse('login'))
         else:
 
-            return render(request, 'Recipes/auth/register.html', context={'errors': form.errors})
+            form = RegisterForm()
+            return render(request, 'Recipes/auth/register.html', context={'errors': form.errors,
+                                                                          'email_used': 'Adres email jest zajęty',
+                                                                          'form': form})
 
     else:
         form = RegisterForm()
