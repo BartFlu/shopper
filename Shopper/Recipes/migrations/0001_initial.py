@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('category', models.CharField(max_length=100, unique=True)),
-                ('group', models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='auth.group')),
+
             ],
         ),
         migrations.CreateModel(
@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=200, unique=True, verbose_name='Nazwa')),
                 ('category', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='products', to='Recipes.category', verbose_name='Kategoria')),
-                ('group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='auth.group')),
+
             ],
             options={
                 'ordering': ['category'],
@@ -76,7 +76,6 @@ class Migration(migrations.Migration):
                 ('quantity', models.PositiveIntegerField(default=0)),
                 ('unit', models.IntegerField(choices=[(1, 'litres'), (2, 'milliliters'), (3, 'grams'), (4, 'pieces')])),
                 ('comments', models.CharField(max_length=300, null=True)),
-                ('group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='auth.group')),
                 ('type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='Recipes.product')),
             ],
         ),
@@ -89,7 +88,6 @@ class Migration(migrations.Migration):
                 ('added', models.DateTimeField(auto_now_add=True)),
                 ('last_used', models.DateField(blank=True, null=True)),
                 ('chosen', models.BooleanField(default=False)),
-                ('group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='auth.group')),
                 ('tags', models.ManyToManyField(related_name='recipes', to='Recipes.Tag', verbose_name='Tagi')),
             ],
             options={
@@ -102,7 +100,6 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('quantity', models.PositiveIntegerField(verbose_name='Ilość')),
                 ('unit', models.IntegerField(choices=[(1, 'litres'), (2, 'milliliters'), (3, 'grams'), (4, 'pieces')], verbose_name='Miara')),
-                ('group', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='auth.group')),
                 ('recipe', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='Recipes.recipe')),
                 ('type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='Recipes.product', verbose_name='Produkt')),
             ],
