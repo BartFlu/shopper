@@ -18,9 +18,6 @@ def register(request):
         form = RegisterForm(request.POST)
 
         if form.is_valid():
-            email = form.cleaned_data['email']
-            if User.objects.filter(email=email).exists():
-                raise ValidationError("Email exists")
             user = form.save()
             user.set_password(user.password)
             user.save()
