@@ -22,12 +22,13 @@ How to run
   1. Add file emailcred.py in ./Shopper/Shopper 
     Fill it with ypur own email credentials or fake ones in that format
     
-    ```
+    
     host = ''
     port = <port_number>
     login = ''
     password = ''
-    ```
+    
+ 
   2. Clone the repository. Go to './shopper/Shopper' directory and run 'docker-compose build' 
 
     
