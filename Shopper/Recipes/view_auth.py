@@ -3,7 +3,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm, LoginForm
 from django.core.exceptions import ValidationError
-from Recipes.models import MyUser
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 def register(request):
@@ -16,6 +18,9 @@ def register(request):
         form = RegisterForm(request.POST)
 
         if form.is_valid():
+            email = form.cleaned_data['email']
+            if User.objects.filter(email=email).exists():
+                raise ValidationError("Email exists")
             user = form.save()
             user.set_password(user.password)
             user.save()
